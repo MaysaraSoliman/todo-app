@@ -1,4 +1,4 @@
-import { addTodolistToLocalstorage, getTodolistFromLocalStorage } from "./localstorage.js";
+import { addTodolistToLocalstorage, getTodolistFromLocalStorage, updateCompletedTaskAndAddToLocalstorage } from "./localstorage.js";
 
 let todoList = [];
 let todoAppResults = document.querySelector("#todoApp .container .todoApp-wrapper .results");
@@ -26,7 +26,7 @@ let addTaskToArray = (inputValue) => {
     }
     todoList.push(todoObject);
     diplayTodolist(todoList);
-    filterTabs();
+
     checkTab();
     addTodolistToLocalstorage(todoList);
 }
@@ -46,26 +46,16 @@ let diplayTodolist = (todoList) => {
             }
       </div>`
     })
-    checkCompletedTaskAndAddToLocalstorage();
+    checkCompletedTask();
 }
 
-let checkCompletedTaskAndAddToLocalstorage = () => {
+let checkCompletedTask = () => {
     let checkBox = document.querySelectorAll("#todoApp .todoApp-wrapper .task-result .check-completed");
     checkBox.forEach((box) => {
         box.addEventListener("click", function () {
             this.classList.toggle("check-completed-active");
-            let todoObject = todoList.find((task) => {
-                return task.id == this.dataset.id;
-            })
-            if (todoObject.completed) {
-                todoObject.completed = false;
-                checkTab();
-                addTodolistToLocalstorage(todoList);
-                return
-            }
-            todoObject.completed = true;
+            updateCompletedTaskAndAddToLocalstorage(todoList, this.dataset.id);
             checkTab();
-            addTodolistToLocalstorage(todoList);
         })
     })
 }
@@ -82,15 +72,14 @@ let filterTabs = () => {
     })
 }
 
-
 let checkTab = () => {
     filterTabsBtns.forEach((btn) => {
         if (btn.classList.contains("filter-tab-active")) {
             if (btn.classList.contains("todo")) {
-                filterTodoTasks();
+                filterTodoTasks()
                 return
             } else if (btn.classList.contains("completed")) {
-                filterCompletedTasks();
+                filterCompletedTasks()
                 return
             }
             diplayTodolist(todoList);
@@ -118,5 +107,6 @@ let initialApp = () => {
     diplayTodolist(todoList);
     filterTabs();
     checkTab();
+
 }
 initialApp();

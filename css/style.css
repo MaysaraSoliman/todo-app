@@ -161,10 +161,6 @@ html {
     align-items: center;
 }
 
-#todoApp .container .todoApp-wrapper .task-result .info {}
-
-#todoApp .container .todoApp-wrapper .task-result .info p {}
-
 #todoApp .container .todoApp-wrapper .task-result .info span {
     color: var(--main-color);
     font-size: 12px;

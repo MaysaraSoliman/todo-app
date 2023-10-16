@@ -1,4 +1,4 @@
-// import { addTodolistToLocalstorage, getTodolistFromLocalStorage } from "./localstorage.js";
+import { addTodolistToLocalstorage, getTodolistFromLocalStorage } from "./localstorage.js";
 
 let todoList = [];
 let todoAppResults = document.querySelector("#todoApp .container .todoApp-wrapper .results");
@@ -28,7 +28,25 @@ let addTaskToArray = (inputValue) => {
     diplayTodolist(todoList);
     filterTabs();
     checkTab();
-    addTodolistToLocalstorage();
+    addTodolistToLocalstorage(todoList);
+}
+
+let diplayTodolist = (todoList) => {
+    todoAppResults.innerHTML = "";
+    todoList.forEach((task) => {
+        todoAppResults.innerHTML += ` <div class="task-result">
+        <div class="info">
+          <p>${task.title}</p>
+          <span>${task.createdAt}</span>
+        </div>
+        ${(task.completed) ?
+                `<div class="check-completed check-completed-active" data-id="${task.id}"></div>`
+                :
+                `<div class="check-completed " data-id="${task.id}"></div>`
+            }
+      </div>`
+    })
+    checkCompletedTaskAndAddToLocalstorage();
 }
 
 let checkCompletedTaskAndAddToLocalstorage = () => {
@@ -42,12 +60,12 @@ let checkCompletedTaskAndAddToLocalstorage = () => {
             if (todoObject.completed) {
                 todoObject.completed = false;
                 checkTab();
-                addTodolistToLocalstorage();
+                addTodolistToLocalstorage(todoList);
                 return
             }
             todoObject.completed = true;
             checkTab();
-            addTodolistToLocalstorage();
+            addTodolistToLocalstorage(todoList);
         })
     })
 }
@@ -63,7 +81,7 @@ let filterTabs = () => {
         })
     })
 }
-filterTabs()
+
 
 let checkTab = () => {
     filterTabsBtns.forEach((btn) => {
@@ -94,37 +112,11 @@ let filterCompletedTasks = () => {
     diplayTodolist(completedTasks);
 }
 
-let diplayTodolist = (todoList) => {
-    todoAppResults.innerHTML = "";
-    todoList.forEach((task) => {
-        todoAppResults.innerHTML += ` <div class="task-result">
-        <div class="info">
-          <p>${task.title}</p>
-          <span>${task.createdAt}</span>
-        </div>
-        ${(task.completed) ?
-                `<div class="check-completed check-completed-active" data-id="${task.id}"></div>`
-                :
-                `<div class="check-completed " data-id="${task.id}"></div>`
-            }
-      </div>`
-    })
-    checkCompletedTaskAndAddToLocalstorage();
-}
 
-let getTodolistFromLocalStorage = () => {
-    if (localStorage.getItem("todo")) {
-        todoList = JSON.parse(localStorage.getItem("todo"));
-        diplayTodolist(todoList);
-        filterTabs();
-        checkTab();
-        console.log(todoList)
-        return
-    }
-    []
+let initialApp = () => {
+    todoList = getTodolistFromLocalStorage();
+    diplayTodolist(todoList);
+    filterTabs();
+    checkTab();
 }
-getTodolistFromLocalStorage();
-
-function addTodolistToLocalstorage() {
-    window.localStorage.setItem("todo", JSON.stringify(todoList));
-}
+initialApp();

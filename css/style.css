@@ -159,6 +159,15 @@ html {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: grab;
+}
+
+#todoApp .container .todoApp-wrapper .task-result.dragging :where(.info, .check-completed) {
+    opacity: 0;
+}
+
+#todoApp .container .todoApp-wrapper .task-result.dragging {
+    border-bottom: 3px solid var(--main-color);
 }
 
 #todoApp .container .todoApp-wrapper .task-result .info span {

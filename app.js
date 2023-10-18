@@ -26,7 +26,6 @@ let addTaskToArray = (inputValue) => {
     }
     todoList.push(todoObject);
     diplayTodolist(todoList);
-
     checkTab();
     addTodolistToLocalstorage(todoList);
 }
@@ -34,7 +33,7 @@ let addTaskToArray = (inputValue) => {
 let diplayTodolist = (todoList) => {
     todoAppResults.innerHTML = "";
     todoList.forEach((task) => {
-        todoAppResults.innerHTML += ` <div class="task-result">
+        todoAppResults.innerHTML += ` <div class="task-result"  draggable="true">
         <div class="info">
           <p>${task.title}</p>
           <span>${task.createdAt}</span>
@@ -47,6 +46,7 @@ let diplayTodolist = (todoList) => {
       </div>`
     })
     checkCompletedTask();
+    dragAndDrop();
 }
 
 let checkCompletedTask = () => {
@@ -110,3 +110,50 @@ let initialApp = () => {
 
 }
 initialApp();
+
+
+
+function dragAndDrop() {
+    const srotAbleResultsList = document.querySelector("#todoApp .container .todoApp-wrapper .results");
+
+    const items = document.querySelectorAll("#todoApp .container .todoApp-wrapper .results .task-result");
+
+    items.forEach((item) => {
+        item.addEventListener("dragstart", () => {
+            setTimeout(() => {
+                item.classList.add("dragging");
+            }, 0)
+            item.addEventListener("dragend", () => item.classList.remove("dragging"))
+        })
+    })
+
+    const intiSortAbleResultsList = (e) => {
+        const draggingItem = srotAbleResultsList.querySelector(".dragging");
+        let siblings = [...srotAbleResultsList.querySelectorAll(".task-result:not(.dragging)")];
+        let nextSibling = siblings.find(sibiling => {
+            return e.clientY <= sibiling.offsetTop + sibiling.offsetHeight / 2;
+        })
+        srotAbleResultsList.insertBefore(draggingItem, nextSibling);
+        saveAfterDragging();
+    }
+    srotAbleResultsList.addEventListener("dragover", intiSortAbleResultsList)
+}
+
+
+function saveAfterDragging() {
+    let newTodoList = [];
+    let tabAll = document.querySelector("#todoApp .todoApp-wrapper .filters .all");
+    if (tabAll.classList.contains("filter-tab-active")) {
+        let todoListAfterDrag = todoAppResults.querySelectorAll(".task-result .check-completed");
+        for (let i = 0; i < todoListAfterDrag.length; i++) {
+            for (let j = 0; j < todoList.length; j++) {
+                if (todoListAfterDrag[i].dataset.id == todoList[j].id) {
+                    newTodoList.push(todoList[j])
+                }
+            }
+        }
+        todoList = newTodoList;
+        addTodolistToLocalstorage(todoList);
+    }
+}
+
